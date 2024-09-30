@@ -30,7 +30,7 @@ import java.util.List;
  * @author yupi
  */
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/interfaceInfo")
 @Slf4j
 public class InterfaceInfoController {
 

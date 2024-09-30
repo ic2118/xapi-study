@@ -2,15 +2,18 @@ package com.yupi.project.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 
+import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
 /**
  * 接口信息
+ * @author omsrv
  */
 @Data
 @TableName(value = "interface_info")
-public class InterfaceInfo {
+public class InterfaceInfo implements Serializable {
+    private static final long serialVersionUID = -2392513651442301027L;
     /**
      * 主键
      */

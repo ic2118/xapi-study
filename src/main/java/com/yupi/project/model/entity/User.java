@@ -2,17 +2,22 @@ package com.yupi.project.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 
+import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
 /**
  * 用户
+ *
+ * @author omsrv
  */
 @Data
 @TableName(value = "`user`")
-public class User {
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+public class User implements Serializable {
+    private static final long serialVersionUID = -3767607717854321144L;
+
+
     /**
      * id
      */

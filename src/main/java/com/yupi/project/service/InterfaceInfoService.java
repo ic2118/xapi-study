@@ -10,5 +10,10 @@ import com.yupi.project.model.entity.InterfaceInfo;
  */
 public interface InterfaceInfoService extends IService<InterfaceInfo> {
 
+    /**
+     * 检验
+     * @param interfaceInfo
+     * @param add
+     */
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
 }
