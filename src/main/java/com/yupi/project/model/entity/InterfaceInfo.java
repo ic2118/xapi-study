@@ -1,19 +1,19 @@
 package com.yupi.project.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-
-import java.io.Serializable;
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 接口信息
- * @author omsrv
  */
 @Data
 @TableName(value = "interface_info")
-public class InterfaceInfo implements Serializable {
-    private static final long serialVersionUID = -2392513651442301027L;
+public class InterfaceInfo {
     /**
      * 主键
      */
@@ -51,6 +51,12 @@ public class InterfaceInfo implements Serializable {
     private String responseHeader;
 
     /**
+     * 请求参数
+     */
+    @TableField(value = "requestParams")
+    private String requestParams;
+
+    /**
      * 接口状态（0-关闭，1-开启）
      */
     @TableField(value = "`status`")
@@ -84,6 +90,5 @@ public class InterfaceInfo implements Serializable {
      * 是否删除(0-未删, 1-已删)
      */
     @TableField(value = "isDelete")
-    @TableLogic
-    private Byte isDelete;
+    private Integer isDelete;
 }
