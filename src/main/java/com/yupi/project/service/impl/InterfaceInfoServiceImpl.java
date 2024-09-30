@@ -1,5 +1,7 @@
 package com.yupi.project.service.impl;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.project.common.ErrorCode;
 import com.yupi.project.exception.BusinessException;
@@ -12,8 +14,7 @@ import org.springframework.stereotype.Service;
 /**
  * 接口信息服务实现类
  *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * @author HP
  */
 @Service
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
@@ -21,23 +22,38 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {
-        if (interfaceInfo == null) {
+
+        if(interfaceInfo == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        Long id = interfaceInfo.getId();
         String name = interfaceInfo.getName();
-        // 创建时，所有参数必须非空
-        if (add) {
-            if (StringUtils.isAnyBlank(name)) {
+        String description = interfaceInfo.getDescription();
+        String url = interfaceInfo.getUrl();
+        String requestHeader = interfaceInfo.getRequestHeader();
+        String responseHeader = interfaceInfo.getResponseHeader();
+        Integer status = interfaceInfo.getStatus();
+        String method = interfaceInfo.getMethod();
+        Long userId = interfaceInfo.getUserId();
+        Date createTime = interfaceInfo.getCreateTime();
+        Date updateTime = interfaceInfo.getUpdateTime();
+        Byte isDelete = interfaceInfo.getIsDelete();
+
+        // 创建时，所有参数必须非非空
+        if(add){
+            if(StringUtils.isAnyBlank(name)){
                 throw new BusinessException(ErrorCode.PARAMS_ERROR);
             }
         }
-        if (StringUtils.isNotBlank(name) && name.length() > 50) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "名称过长");
+
+        if(StringUtils.isNotBlank(name) && name.length() < 50){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"内容过长");
         }
+
+
     }
-
 }
-
 
 
 

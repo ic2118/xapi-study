@@ -6,15 +6,13 @@ import com.yupi.project.annotation.AuthCheck;
 import com.yupi.project.common.*;
 import com.yupi.project.constant.CommonConstant;
 import com.yupi.project.exception.BusinessException;
-import com.yupi.project.model.dto.post.PostAddRequest;
-import com.yupi.project.model.dto.post.PostQueryRequest;
-import com.yupi.project.model.dto.post.PostUpdateRequest;
+import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
+import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.yupi.project.model.entity.InterfaceInfo;
-import com.yupi.project.model.entity.Post;
 import com.yupi.project.model.entity.User;
 import com.yupi.project.model.enums.InterfaceInfoStatusEnum;
 import com.yupi.project.service.InterfaceInfoService;
-import com.yupi.project.service.PostService;
 import com.yupi.project.service.UserService;
 import com.yupi.xapiclientsdk.client.XApiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -51,27 +49,27 @@ public class InterfaceInfoController {
     /**
      * 创建
      *
-     * @param postAddRequest
+     * @param interfaceInfoAddRequest
      * @param request
      * @return
      */
     @PostMapping("/add")
-    public BaseResponse<Long> addPost(@RequestBody PostAddRequest postAddRequest, HttpServletRequest request) {
-        if (postAddRequest == null) {
+    public BaseResponse<Long> addInterfaceInfo(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
+        if (interfaceInfoAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = new Post();
-        BeanUtils.copyProperties(postAddRequest, post);
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        BeanUtils.copyProperties(interfaceInfoAddRequest, interfaceInfo);
         // 校验
-        postService.validPost(post, true);
+        interfaceInfoService.validInterfaceInfo(interfaceInfo, true);
         User loginUser = userService.getLoginUser(request);
-        post.setUserId(loginUser.getId());
-        boolean result = postService.save(post);
+        interfaceInfo.setUserId(loginUser.getId());
+        boolean result = interfaceInfoService.save(interfaceInfo);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-        long newPostId = post.getId();
-        return ResultUtils.success(newPostId);
+        long newInterfaceInfoId = interfaceInfo.getId();
+        return ResultUtils.success(newInterfaceInfoId);
     }
 
     /**
@@ -82,54 +80,54 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deletePost(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteInterfaceInfo(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.getLoginUser(request);
         long id = deleteRequest.getId();
         // 判断是否存在
-        Post oldPost = postService.getById(id);
-        if (oldPost == null) {
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 仅本人或管理员可删除
-        if (!oldPost.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        boolean b = postService.removeById(id);
+        boolean b = interfaceInfoService.removeById(id);
         return ResultUtils.success(b);
     }
 
     /**
      * 更新
      *
-     * @param postUpdateRequest
+     * @param interfaceInfoUpdateRequest
      * @param request
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> updatePost(@RequestBody PostUpdateRequest postUpdateRequest,
+    public BaseResponse<Boolean> updateInterfaceInfo(@RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest,
                                             HttpServletRequest request) {
-        if (postUpdateRequest == null || postUpdateRequest.getId() <= 0) {
+        if (interfaceInfoUpdateRequest == null || interfaceInfoUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = new Post();
-        BeanUtils.copyProperties(postUpdateRequest, post);
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         // 参数校验
-        postService.validPost(post, false);
+        interfaceInfoService.validInterfaceInfo(interfaceInfo, false);
         User user = userService.getLoginUser(request);
-        long id = postUpdateRequest.getId();
+        long id = interfaceInfoUpdateRequest.getId();
         // 判断是否存在
-        Post oldPost = postService.getById(id);
-        if (oldPost == null) {
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 仅本人或管理员可修改
-        if (!oldPost.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        boolean result = postService.updateById(post);
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
         return ResultUtils.success(result);
     }
 
@@ -140,63 +138,63 @@ public class InterfaceInfoController {
      * @return
      */
     @GetMapping("/get")
-    public BaseResponse<Post> getPostById(long id) {
+    public BaseResponse<InterfaceInfo> getInterfaceInfoById(long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = postService.getById(id);
-        return ResultUtils.success(post);
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        return ResultUtils.success(interfaceInfo);
     }
 
     /**
      * 获取列表（仅管理员可使用）
      *
-     * @param postQueryRequest
+     * @param interfaceInfoQueryRequest
      * @return
      */
     @AuthCheck(mustRole = "admin")
     @GetMapping("/list")
-    public BaseResponse<List<Post>> listPost(PostQueryRequest postQueryRequest) {
-        Post postQuery = new Post();
-        if (postQueryRequest != null) {
-            BeanUtils.copyProperties(postQueryRequest, postQuery);
+    public BaseResponse<List<InterfaceInfo>> listInterfaceInfo(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
+        InterfaceInfo interfaceInfoQuery = new InterfaceInfo();
+        if (interfaceInfoQueryRequest != null) {
+            BeanUtils.copyProperties(interfaceInfoQueryRequest, interfaceInfoQuery);
         }
-        QueryWrapper<Post> queryWrapper = new QueryWrapper<>(postQuery);
-        List<Post> postList = postService.list(queryWrapper);
-        return ResultUtils.success(postList);
+        QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>(interfaceInfoQuery);
+        List<InterfaceInfo> interfaceInfoList = interfaceInfoService.list(queryWrapper);
+        return ResultUtils.success(interfaceInfoList);
     }
 
     /**
      * 分页获取列表
      *
-     * @param postQueryRequest
+     * @param interfaceInfoQueryRequest
      * @param request
      * @return
      */
     @GetMapping("/list/page")
-    public BaseResponse<Page<Post>> listPostByPage(PostQueryRequest postQueryRequest, HttpServletRequest request) {
-        if (postQueryRequest == null) {
+    public BaseResponse<Page<InterfaceInfo>> listInterfaceInfoByPage(InterfaceInfoQueryRequest interfaceInfoQueryRequest, HttpServletRequest request) {
+        if (interfaceInfoQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post postQuery = new Post();
-        BeanUtils.copyProperties(postQueryRequest, postQuery);
-        long current = postQueryRequest.getCurrent();
-        long size = postQueryRequest.getPageSize();
-        String sortField = postQueryRequest.getSortField();
-        String sortOrder = postQueryRequest.getSortOrder();
-        String content = postQuery.getContent();
+        InterfaceInfo interfaceInfoQuery = new InterfaceInfo();
+        BeanUtils.copyProperties(interfaceInfoQueryRequest, interfaceInfoQuery);
+        long current = interfaceInfoQueryRequest.getCurrent();
+        long size = interfaceInfoQueryRequest.getPageSize();
+        String sortField = interfaceInfoQueryRequest.getSortField();
+        String sortOrder = interfaceInfoQueryRequest.getSortOrder();
+        String description = interfaceInfoQuery.getDescription();
         // content 需支持模糊搜索
-        postQuery.setContent(null);
+        interfaceInfoQuery.setDescription(null);
         // 限制爬虫
         if (size > 50) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        QueryWrapper<Post> queryWrapper = new QueryWrapper<>(postQuery);
-        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
+        QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>(interfaceInfoQuery);
+        queryWrapper.like(StringUtils.isNotBlank(description), "description", description);
         queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
-        Page<Post> postPage = postService.page(new Page<>(current, size), queryWrapper);
-        return ResultUtils.success(postPage);
+        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
+        return ResultUtils.success(interfaceInfoPage);
     }
 
     // endregion

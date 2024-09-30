@@ -1,9 +1,7 @@
 package com.yupi.project.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
 import lombok.Data;
 
@@ -83,5 +81,6 @@ public class InterfaceInfo {
      * 是否删除(0-未删, 1-已删)
      */
     @TableField(value = "isDelete")
+    @TableLogic
     private Byte isDelete;
 }
